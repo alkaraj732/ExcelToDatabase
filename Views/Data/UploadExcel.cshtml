@@ -1,0 +1,215 @@
+﻿
+
+@model IEnumerable<CustomerViewModel>
+
+@{
+	ViewData["Title"] = "Upload Excel File";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>@ViewData["Title"]</title>
+	<!-- Include Bootstrap CSS -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Include DataTables CSS -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css" />
+	<style>
+		body {
+			padding-top: 60px; /* Adjust the top padding if using a fixed navbar */
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+		<a class="navbar-brand" href="#">Your App Name</a>
+		<!-- Add your navigation links here -->
+	</nav>
+
+	<div class="container mt-4">
+		<h1>Upload Excel File</h1>
+
+		<form asp-controller="Data" asp-action="UploadExcel" method="post" enctype="multipart/form-data">
+			<div class="form-group">
+				<label for="file">Choose Excel file:</label>
+				<input type="file" name="file" id="file" class="form-control-file" accept=".xlsx">
+			</div>
+
+			<button id="Upload" name="Upload" type="submit" class="btn btn-primary">Upload</button>
+			@*<button id="Duplicate" name="Duplicate" type="submit" asp-controller="Data" asp-action="DuplicateRecords" method="get" class="btn btn-secondary">Check Duplicates</button>*@
+			<a class="btn btn-primary" data-bs-toggle="modal" href="#" role="button" onclick="Duplicate()" >Check Records</a>
+			@*<button id="Unique" name="Unique" type="submit" asp-controller="Data" asp-action="UniqueRecords" method="post" class="btn btn-secondary">Check Uniques</button>*@
+
+		</form>
+
+		@if (Model.Count() > 0)
+		{
+			<input id="Export" name="Export" type="submit" asp-controller="Data" asp-action="save" method="post" value="Export" class="btn btn-success" />
+			<hr />
+			<table id="ExcelTable" class="table table-striped table-bordered" style="width:100%">
+				<thead>
+					<tr>
+						<th>NAME</th>
+						<th>PHONENUMBER</th>
+						<th>TAGS</th>
+						<th>AGENTPHONENUMBER</th>
+						<th>CUSTOMERDATECREATED</th>
+						<th>SOURCE</th>
+						<th>CUSTOMERBLOCKEDSTATUS</th>
+						<th>LASTTEMPLATESENTAT</th>
+						<th>FIRSTMESSAGERECEIVEDAT</th>
+						<th>FIRSTMESSAGESENTAT</th>
+						<th>WHATSAPPNAME</th>
+						<th>OPTOUT</th>
+						<th>LASTMESSAGESENTAT</th>
+						<th>CUSTOMERNAME</th>
+						<th>EMAIL</th>
+						<th>CITY</th>
+						<th>COI</th>
+						<th>RTI</th>
+						<th>LINKEDIN</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (CustomerViewModel customer in Model)
+					{
+						<tr>
+							<td>@customer.NAME</td>
+							<td>@customer.PHONENUMBER</td>
+							<td>@customer.TAGS</td>
+							<td>@customer.AGENTPHONENUMBER</td>
+							<td>@customer.CUSTOMERDATECREATED</td>
+							<td>@customer.SOURCE</td>
+							<td>@customer.CUSTOMERBLOCKEDSTATUS</td>
+							<td>@customer.LASTTEMPLATESENTAT</td>
+							<td>@customer.FIRSTMESSAGERECEIVEDAT</td>
+							<td>@customer.FIRSTMESSAGESENTAT</td>
+							<td>@customer.WHATSAPPNAME</td>
+							<td>@customer.OPTOUT</td>
+							<td>@customer.LASTMESSAGESENTAT</td>
+							<td>@customer.CUSTOMERNAME</td>
+							<td>@customer.EMAIL</td>
+							<td>@customer.CITY</td>
+							<td>@customer.COI</td>
+							<td>@customer.RTI</td>
+							<td>@customer.LINKEDIN</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+
+
+	</div>
+	</div>
+
+
+	<div class="modal fade" id="duplicatemodal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  <div class= "modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h5 class="modal-title" id="exampleModalToggleLabel">Duplicate Records</h5>
+		<div><button id ="unique" name="unique" class="btn btn-primary" data-bs-target="#Uniquemodal" data-bs-toggle="modal" onclick="unique()" data-bs-dismiss="modal">Check Unique records</button></div>
+		
+        <button type="button"  class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="duplicatemodaldata">
+        
+      </div>
+      <div class="modal-footer">
+        
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="Uniquemodal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalToggleLabel2">Unique Records</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="uniqueRecords">
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+</body>
+</html>
+
+
+	<!-- Include jQuery and Popper.js before Bootstrap JavaScript -->
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<!-- Include Bootstrap JavaScript -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<!-- Include DataTables script after jQuery -->
+	<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<!-- Include jQuery first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function Duplicate()
+{
+    debugger;
+    //  var id = $("#MId").html();
+    $.post("/Data/DuplicateRecords/",
+
+        function (res)
+        {
+            debugger;
+            if (res)
+            {
+                $('#duplicatemodaldata').html(res);
+            }
+            else
+            {
+                alert("Unsuccessful");
+            }
+ });
+
+    $('#duplicatemodal').modal("show");
+};
+
+function unique()
+{
+    debugger;
+    //  var id = $("#MId").html();
+    $.post("/Data/UniqueRecords/",
+
+        function (res)
+        {
+            debugger;
+            if (res)
+            {
+                $('#uniqueRecords').html(res);
+            }
+            else
+            {
+                alert("Unsuccessful");
+            }
+ });
+
+    $('#Uniquemodal').modal("show");
+};
+
+</script>
